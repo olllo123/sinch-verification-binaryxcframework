@@ -1,0 +1,532 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.3 (swiftlang-1200.0.29.2 clang-1200.0.30.1)
+// swift-module-flags: -target arm64-apple-ios13.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name Verification
+import Alamofire
+import CoreTelephony
+import Foundation
+import PhoneNumberKit
+import Swift
+import SystemConfiguration
+import UIKit
+@_exported import Verification
+public protocol VerificationMethodConfigCreatorParameters {
+  func honourEarlyReject(_ honourEarlyReject: Swift.Bool) -> Self
+  func custom(_ custom: Swift.String?) -> Self
+  func reference(_ reference: Swift.String?) -> Self
+  func acceptedLanguages(_ acceptedLanguages: [Verification.VerificationLanguage]) -> Self
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class FlashcallVerificationMethod : Verification.VerificationMethod {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodBuilder, Verification.FlashcallVerificationConfigSetter {
+    public static func instance() -> Verification.FlashcallVerificationConfigSetter
+    public func config(_ config: Verification.FlashcallVerificationConfig) -> Verification.VerificationMethodCreator
+    override public func build() -> Verification.Verification
+    @objc deinit
+  }
+  @objc deinit
+}
+public protocol InitiationListener : AnyObject {
+  func onInitiated(_ data: Verification.InitiationResponseData)
+  func onInitiationFailed(e: Swift.Error)
+}
+extension InitiationListener {
+  public func onInitiated(_ data: Verification.InitiationResponseData)
+  public func onInitiationFailed(e: Swift.Error)
+}
+public enum Constants {
+  public enum Api {
+    public static var userDefinedDomain: Swift.String?
+  }
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class CalloutVerificationMethod : Verification.VerificationMethod {
+  public func onInitiate()
+  public func onVerify(_ verificationCode: Swift.String, fromSource sourceType: Verification.VerificationSourceType)
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodBuilder, Verification.CalloutVerificationConfigSetter {
+    public static func instance() -> Verification.CalloutVerificationConfigSetter
+    public func config(_ config: Verification.CalloutVerificationConfig) -> Verification.VerificationMethodCreator
+    override public func build() -> Verification.Verification
+    @objc deinit
+  }
+  @objc deinit
+}
+public enum ReachabilityError : Swift.Error {
+  case failedToCreateWithAddress(Darwin.sockaddr, Swift.Int32)
+  case failedToCreateWithHostname(Swift.String, Swift.Int32)
+  case unableToSetCallback(Swift.Int32)
+  case unableToSetDispatchQueue(Swift.Int32)
+  case unableToGetFlags(Swift.Int32)
+}
+@available(*, unavailable, renamed: "Notification.Name.reachabilityChanged")
+public let ReachabilityChangedNotification: Foundation.NSNotification.Name
+extension NSNotification.Name {
+  public static let reachabilityChanged: Foundation.Notification.Name
+}
+public class Reachability {
+  public typealias NetworkReachable = (Verification.Reachability) -> ()
+  public typealias NetworkUnreachable = (Verification.Reachability) -> ()
+  @available(*, unavailable, renamed: "Connection")
+  public enum NetworkStatus : Swift.CustomStringConvertible {
+    case notReachable, reachableViaWiFi, reachableViaWWAN
+    public var description: Swift.String {
+      get
+    }
+    public static func == (a: Verification.Reachability.NetworkStatus, b: Verification.Reachability.NetworkStatus) -> Swift.Bool
+    public var hashValue: Swift.Int {
+      get
+    }
+    public func hash(into hasher: inout Swift.Hasher)
+  }
+  public enum Connection : Swift.CustomStringConvertible {
+    @available(*, deprecated, renamed: "unavailable")
+    case none
+    case unavailable, wifi, cellular
+    public var description: Swift.String {
+      get
+    }
+    public static func == (a: Verification.Reachability.Connection, b: Verification.Reachability.Connection) -> Swift.Bool
+    public var hashValue: Swift.Int {
+      get
+    }
+    public func hash(into hasher: inout Swift.Hasher)
+  }
+  public var whenReachable: Verification.Reachability.NetworkReachable?
+  public var whenUnreachable: Verification.Reachability.NetworkUnreachable?
+  @available(*, deprecated, renamed: "allowsCellularConnection")
+  final public let reachableOnWWAN: Swift.Bool
+  public var allowsCellularConnection: Swift.Bool
+  public var notificationCenter: Foundation.NotificationCenter
+  @available(*, deprecated, renamed: "connection.description")
+  public var currentReachabilityString: Swift.String {
+    get
+  }
+  @available(*, unavailable, renamed: "connection")
+  public var currentReachabilityStatus: Verification.Reachability.Connection {
+    get
+  }
+  public var connection: Verification.Reachability.Connection {
+    get
+  }
+  required public init(reachabilityRef: SystemConfiguration.SCNetworkReachability, queueQoS: Dispatch.DispatchQoS = .default, targetQueue: Dispatch.DispatchQueue? = nil, notificationQueue: Dispatch.DispatchQueue? = .main)
+  convenience public init(hostname: Swift.String, queueQoS: Dispatch.DispatchQoS = .default, targetQueue: Dispatch.DispatchQueue? = nil, notificationQueue: Dispatch.DispatchQueue? = .main) throws
+  convenience public init(queueQoS: Dispatch.DispatchQoS = .default, targetQueue: Dispatch.DispatchQueue? = nil, notificationQueue: Dispatch.DispatchQueue? = .main) throws
+  @objc deinit
+}
+extension Reachability {
+  public func startNotifier() throws
+  public func stopNotifier()
+  @available(*, deprecated, message: "Please use `connection != .none`")
+  public var isReachable: Swift.Bool {
+    get
+  }
+  @available(*, deprecated, message: "Please use `connection == .cellular`")
+  public var isReachableViaWWAN: Swift.Bool {
+    get
+  }
+  @available(*, deprecated, message: "Please use `connection == .wifi`")
+  public var isReachableViaWiFi: Swift.Bool {
+    get
+  }
+  public var description: Swift.String {
+    get
+  }
+}
+public protocol SeamlessGlobalConfigSetter {
+  func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.SeamlessVerificationNumberSetter
+}
+public protocol SeamlessVerificationNumberSetter {
+  func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.SeamlessVerificationConfigCreator
+  func number(_ number: Swift.String) -> Verification.SeamlessVerificationConfigCreator
+}
+extension SeamlessVerificationNumberSetter {
+  public func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.SeamlessVerificationConfigCreator
+}
+public protocol SeamlessVerificationConfigCreator : Verification.VerificationMethodConfigCreatorParameters {
+  func build() -> Verification.SeamlessVerificationConfig
+}
+public protocol GlobalConfigCreator {
+  func build() -> Verification.SinchGlobalConfig
+}
+public protocol HasApply {
+}
+extension HasApply {
+  public func apply(closure: (Self) -> ()) -> Self
+}
+extension NSObject : Verification.HasApply {
+}
+extension URLRequest : Verification.HasApply {
+}
+public protocol SeamlessVerificationConfigSetter {
+  func config(_ config: Verification.SeamlessVerificationConfig) -> Verification.VerificationMethodCreator
+}
+public protocol SmsVerificationConfigSetter {
+  func config(_ config: Verification.SmsVerificationConfig) -> Verification.VerificationMethodCreator
+}
+@_hasMissingDesignatedInitializers public class VerificationMethod : Verification.InitiationListener, Verification.VerificationListener {
+  public var verificationState: Verification.VerificationState {
+    get
+  }
+  public var service: Alamofire.Session {
+    get
+  }
+  public func onInitiated(_ data: Verification.InitiationResponseData)
+  public func onInitiationFailed(e: Swift.Error)
+  public func onVerified()
+  public func onVerificationFailed(e: Swift.Error)
+  @objc deinit
+}
+extension VerificationMethod : Verification.Verification {
+  final public func initiate()
+  final public func verify(verificationCode: Swift.String)
+  public func stop()
+}
+public protocol VerificationData {
+  var method: Verification.VerificationMethodType { get }
+  var source: Verification.VerificationSourceType { get }
+}
+public protocol AuthorizationMethod {
+  func onAuthorize(_ urlRequest: Foundation.URLRequest) -> Foundation.URLRequest
+}
+public struct FlashcallInitiationDetails : Swift.Codable, Swift.Equatable {
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public static func == (a: Verification.FlashcallInitiationDetails, b: Verification.FlashcallInitiationDetails) -> Swift.Bool
+}
+public protocol FlashcallGlobalConfigSetter {
+  func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.FlashcallVerificationNumberSetter
+}
+public protocol FlashcallVerificationNumberSetter {
+  func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.FlashcallVerificationConfigCreator
+  func number(_ number: Swift.String) -> Verification.FlashcallVerificationConfigCreator
+}
+extension FlashcallVerificationNumberSetter {
+  public func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.FlashcallVerificationConfigCreator
+}
+public protocol FlashcallVerificationConfigCreator : Verification.VerificationMethodConfigCreatorParameters {
+  func build() -> Verification.FlashcallVerificationConfig
+}
+@_hasMissingDesignatedInitializers public class SinchGlobalConfig {
+  @_hasMissingDesignatedInitializers public class Builder : Verification.AuthorizationMethodSetter, Verification.GlobalConfigCreator {
+    public static func instance() -> Verification.AuthorizationMethodSetter
+    public func authorizationMethod(_ authorizationMethod: Verification.AuthorizationMethod) -> Verification.GlobalConfigCreator
+    public func build() -> Verification.SinchGlobalConfig
+    @objc deinit
+  }
+  @objc deinit
+}
+extension SinchGlobalConfig.Builder : Verification.HasApply {
+}
+public struct VerificationInitData : Verification.VerificationMethodProperties {
+  public let usedMethod: Verification.VerificationMethodType
+  public let number: Swift.String
+  public let custom: Swift.String?
+  public let reference: Swift.String?
+  public let honoursEarlyReject: Swift.Bool
+  public let acceptedLanguages: [Verification.VerificationLanguage]
+  public init(usedMethod: Verification.VerificationMethodType, number: Swift.String, custom: Swift.String?, reference: Swift.String?, honoursEarlyReject: Swift.Bool, acceptedLanguages: [Verification.VerificationLanguage])
+}
+public struct InitiationResponseData : Swift.Equatable, Swift.Codable {
+  public let id: Swift.String
+  public let method: Verification.VerificationMethodType
+  public let smsDetails: Verification.SmsInitiationDetails?
+  public let flashcallDetails: Verification.FlashcallInitiationDetails?
+  public let seamlessDetails: Verification.SeamlessInitiationDetails?
+  public let contentLanguage: Verification.VerificationLanguage?
+  public init(from decoder: Swift.Decoder) throws
+  public static func == (a: Verification.InitiationResponseData, b: Verification.InitiationResponseData) -> Swift.Bool
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public enum SDKError : Foundation.LocalizedError {
+  case illegalArgument(message: Swift.String)
+  case encoding(encodable: Swift.Encodable)
+  case apiCall(data: Verification.ApiErrorData)
+  case timeoutException
+  case unexpected(message: Swift.String)
+  public var errorDescription: Swift.String? {
+    get
+  }
+}
+public struct SmsInitiationDetails : Swift.Codable, Swift.Equatable {
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public static func == (a: Verification.SmsInitiationDetails, b: Verification.SmsInitiationDetails) -> Swift.Bool
+}
+public enum VerificationSourceType : Swift.String, Swift.Codable {
+  case interception
+  case manual
+  case log
+  case seamless
+  public typealias RawValue = Swift.String
+  public init?(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum VerificationStatus : Swift.String, Swift.Codable {
+  case pending
+  case successful
+  case failed
+  case denied
+  case aborted
+  case error
+  public typealias RawValue = Swift.String
+  public init?(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum VerificationMethodType : Swift.String, Swift.Codable, Swift.Equatable {
+  case sms
+  case flashcall
+  case callout
+  case seamless
+  public typealias RawValue = Swift.String
+  public init?(rawValue: Swift.String)
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ApiErrorData : Swift.Codable, Swift.Equatable {
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public static func == (a: Verification.ApiErrorData, b: Verification.ApiErrorData) -> Swift.Bool
+}
+public protocol VerificationMethodCreator {
+  func initiationListener(_ initiationListener: Verification.InitiationListener?) -> Verification.VerificationMethodCreator
+  func verificationListener(_ verificationListener: Verification.VerificationListener?) -> Verification.VerificationMethodCreator
+  func build() -> Verification.Verification
+}
+@_hasMissingDesignatedInitializers public class VerificationMethodConfiguration : Verification.VerificationMethodProperties {
+  final public let number: Swift.String
+  final public let custom: Swift.String?
+  final public let reference: Swift.String?
+  final public let honoursEarlyReject: Swift.Bool
+  final public let acceptedLanguages: [Verification.VerificationLanguage]
+  @objc deinit
+}
+public struct VerificationResponseData : Swift.Codable {
+  public var asSDKError: Verification.SDKError? {
+    get
+  }
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public protocol SmsGlobalConfigSetter {
+  func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.SmsVerificationNumberSetter
+}
+public protocol SmsVerificationNumberSetter {
+  func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.SmsVerificationConfigCreator
+  func number(_ number: Swift.String) -> Verification.SmsVerificationConfigCreator
+}
+extension SmsVerificationNumberSetter {
+  public func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.SmsVerificationConfigCreator
+}
+public protocol SmsVerificationConfigCreator : Verification.VerificationMethodConfigCreatorParameters {
+  func build() -> Verification.SmsVerificationConfig
+}
+public protocol VerificationMethodProperties {
+  var number: Swift.String { get }
+  var custom: Swift.String? { get }
+  var reference: Swift.String? { get }
+  var honoursEarlyReject: Swift.Bool { get }
+  var acceptedLanguages: [Verification.VerificationLanguage] { get }
+}
+extension VerificationMethodProperties {
+  public func commonPropertiesMatch(_ other: Verification.VerificationMethodProperties) -> Swift.Bool
+}
+public struct VerificationLanguage : Swift.Equatable, Swift.Codable {
+  public init(language: Swift.String, region: Swift.String? = nil, weight: Swift.Double? = nil) throws
+  public init(contentLanguageHeader: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+  public static func == (a: Verification.VerificationLanguage, b: Verification.VerificationLanguage) -> Swift.Bool
+  public func encode(to encoder: Swift.Encoder) throws
+}
+@_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class SeamlessVerificationMethod : Verification.VerificationMethod {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodBuilder, Verification.SeamlessVerificationConfigSetter {
+    public static func instance() -> Verification.SeamlessVerificationConfigSetter
+    public func config(_ config: Verification.SeamlessVerificationConfig) -> Verification.VerificationMethodCreator
+    override public func build() -> Verification.Verification
+    @objc deinit
+  }
+  override public func onInitiated(_ data: Verification.InitiationResponseData)
+  @objc deinit
+}
+public enum VerificationState : Swift.Equatable {
+  case idle
+  case manuallyStopped
+  case initialization(status: Verification.VerificationStateStatus)
+  case verification(status: Verification.VerificationStateStatus)
+  public static func == (a: Verification.VerificationState, b: Verification.VerificationState) -> Swift.Bool
+}
+@_hasMissingDesignatedInitializers public class FlashcallVerificationConfig : Verification.VerificationMethodConfiguration {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodConfigBuilder, Verification.FlashcallGlobalConfigSetter, Verification.FlashcallVerificationNumberSetter, Verification.FlashcallVerificationConfigCreator {
+    public static func instance() -> Verification.FlashcallGlobalConfigSetter
+    public func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.FlashcallVerificationNumberSetter
+    public func number(_ number: Swift.String) -> Verification.FlashcallVerificationConfigCreator
+    public func build() -> Verification.FlashcallVerificationConfig
+    @objc deinit
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SmsVerificationConfig : Verification.VerificationMethodConfiguration {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodConfigBuilder, Verification.SmsGlobalConfigSetter, Verification.SmsVerificationNumberSetter, Verification.SmsVerificationConfigCreator {
+    public static func instance() -> Verification.SmsGlobalConfigSetter
+    public func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.SmsVerificationNumberSetter
+    public func number(_ number: Swift.String) -> Verification.SmsVerificationConfigCreator
+    public func build() -> Verification.SmsVerificationConfig
+    @objc deinit
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class CalloutVerificationConfig : Verification.VerificationMethodConfiguration {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodConfigBuilder, Verification.CalloutGlobalConfigSetter, Verification.CalloutVerificationNumberSetter, Verification.CalloutVerificationConfigCreator {
+    public static func instance() -> Verification.CalloutGlobalConfigSetter
+    public func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.CalloutVerificationNumberSetter
+    public func number(_ number: Swift.String) -> Verification.CalloutVerificationConfigCreator
+    public func build() -> Verification.CalloutVerificationConfig
+    @objc deinit
+  }
+  @objc deinit
+}
+public struct CommonVerificationInitializationParameters {
+  public init(globalConfig: Verification.SinchGlobalConfig, verificationInitData: Verification.VerificationInitData, initalizationListener: Verification.InitiationListener? = nil, verificationListener: Verification.VerificationListener? = nil)
+}
+public protocol CalloutVerificationConfigSetter {
+  func config(_ config: Verification.CalloutVerificationConfig) -> Verification.VerificationMethodCreator
+}
+@objc @_inheritsConvenienceInitializers public class PhoneNumberUITextField : UIKit.UITextField {
+  public var countryIso: Swift.String {
+    get
+    set
+  }
+  public var e164Number: Swift.String? {
+    get
+  }
+  @objc required dynamic public init?(coder: Foundation.NSCoder)
+  @objc override dynamic public init(frame: CoreGraphics.CGRect)
+  @objc deinit
+}
+public protocol VerificationListener : AnyObject {
+  func onVerified()
+  func onVerificationFailed(e: Swift.Error)
+}
+extension VerificationListener {
+  public func onVerified()
+  public func onVerificationFailed(e: Swift.Error)
+}
+@_hasMissingDesignatedInitializers public class BaseVerificationMethodConfigBuilder : Verification.VerificationMethodConfigCreatorParameters {
+  public func honourEarlyReject(_ honourEarlyReject: Swift.Bool) -> Self
+  public func custom(_ custom: Swift.String?) -> Self
+  public func reference(_ reference: Swift.String?) -> Self
+  public func acceptedLanguages(_ acceptedLanguages: [Verification.VerificationLanguage]) -> Self
+  @objc deinit
+}
+extension BaseVerificationMethodConfigBuilder : Verification.HasApply {
+}
+@_hasMissingDesignatedInitializers public class VerificationMethodsBuilder {
+  public static func createVerification(withParameters parameters: Verification.CommonVerificationInitializationParameters) -> Verification.Verification
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class BaseVerificationMethodBuilder : Verification.VerificationMethodCreator {
+  public func initiationListener(_ initiationListener: Verification.InitiationListener?) -> Verification.VerificationMethodCreator
+  public func verificationListener(_ verificationListener: Verification.VerificationListener?) -> Verification.VerificationMethodCreator
+  public func build() -> Verification.Verification
+  @objc deinit
+}
+extension BaseVerificationMethodBuilder : Verification.HasApply {
+}
+public enum VerificationStateStatus {
+  case ongoing
+  case success
+  case error
+  public static func == (a: Verification.VerificationStateStatus, b: Verification.VerificationStateStatus) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+  public func hash(into hasher: inout Swift.Hasher)
+}
+public class AppKeyAuthorizationMethod {
+  public init(appKey: Swift.String)
+  @objc deinit
+}
+extension AppKeyAuthorizationMethod : Verification.AuthorizationMethod {
+  public func onAuthorize(_ urlRequest: Foundation.URLRequest) -> Foundation.URLRequest
+}
+@_hasMissingDesignatedInitializers public class SinchPhoneNumberUtils {
+  public static func formatNumberToE164(_ number: Swift.String, forCountryIso countryIso: Swift.String = defaultCountryIso) -> Swift.String?
+  public static func isPossiblePhoneNumber(_ number: Swift.String, forCountryIso countryIso: Swift.String = defaultCountryIso) -> Swift.Bool
+  public static var defaultCountryIso: Swift.String {
+    get
+  }
+  @objc deinit
+}
+public protocol AuthorizationMethodSetter {
+  func authorizationMethod(_ authorizationMethod: Verification.AuthorizationMethod) -> Verification.GlobalConfigCreator
+}
+extension String {
+  public func prefixed(with prefix: Swift.String) -> Swift.String
+  public func nilIfEmpty() -> Swift.String?
+}
+public protocol CalloutGlobalConfigSetter {
+  func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.CalloutVerificationNumberSetter
+}
+public protocol CalloutVerificationNumberSetter {
+  func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.CalloutVerificationConfigCreator
+  func number(_ number: Swift.String) -> Verification.CalloutVerificationConfigCreator
+}
+extension CalloutVerificationNumberSetter {
+  public func withVerificationProperties(_ verificationProperties: Verification.VerificationMethodProperties) -> Verification.CalloutVerificationConfigCreator
+}
+public protocol CalloutVerificationConfigCreator : Verification.VerificationMethodConfigCreatorParameters {
+  func build() -> Verification.CalloutVerificationConfig
+}
+public protocol Verification {
+  var verificationState: Verification.VerificationState { get }
+  func initiate()
+  func verify(verificationCode: Swift.String)
+  func stop()
+}
+public protocol FlashcallVerificationConfigSetter {
+  func config(_ config: Verification.FlashcallVerificationConfig) -> Verification.VerificationMethodCreator
+}
+@_hasMissingDesignatedInitializers public class SeamlessVerificationConfig : Verification.VerificationMethodConfiguration {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodConfigBuilder, Verification.SeamlessGlobalConfigSetter, Verification.SeamlessVerificationNumberSetter, Verification.SeamlessVerificationConfigCreator {
+    public static func instance() -> Verification.SeamlessGlobalConfigSetter
+    public func globalConfig(_ sinchGlobalConfig: Verification.SinchGlobalConfig) -> Verification.SeamlessVerificationNumberSetter
+    public func number(_ number: Swift.String) -> Verification.SeamlessVerificationConfigCreator
+    public func build() -> Verification.SeamlessVerificationConfig
+    @objc deinit
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class SmsVerificationMethod : Verification.VerificationMethod {
+  public func onInitiate()
+  public func onVerify(_ verificationCode: Swift.String, fromSource sourceType: Verification.VerificationSourceType)
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class Builder : Verification.BaseVerificationMethodBuilder, Verification.SmsVerificationConfigSetter {
+    public static func instance() -> Verification.SmsVerificationConfigSetter
+    public func config(_ config: Verification.SmsVerificationConfig) -> Verification.VerificationMethodCreator
+    override public func build() -> Verification.Verification
+    @objc deinit
+  }
+  @objc deinit
+}
+public struct SeamlessInitiationDetails : Swift.Codable, Swift.Equatable {
+  public let targetUri: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+  public func encode(to encoder: Swift.Encoder) throws
+  public static func == (a: Verification.SeamlessInitiationDetails, b: Verification.SeamlessInitiationDetails) -> Swift.Bool
+}
+@available(*, unavailable, renamed: "Connection")
+extension Verification.Reachability.NetworkStatus : Swift.Equatable {}
+@available(*, unavailable, renamed: "Connection")
+extension Verification.Reachability.NetworkStatus : Swift.Hashable {}
+extension Verification.Reachability.Connection : Swift.Equatable {}
+extension Verification.Reachability.Connection : Swift.Hashable {}
+extension Verification.VerificationSourceType : Swift.Equatable {}
+extension Verification.VerificationSourceType : Swift.Hashable {}
+extension Verification.VerificationSourceType : Swift.RawRepresentable {}
+extension Verification.VerificationStatus : Swift.Equatable {}
+extension Verification.VerificationStatus : Swift.Hashable {}
+extension Verification.VerificationStatus : Swift.RawRepresentable {}
+extension Verification.VerificationMethodType : Swift.Hashable {}
+extension Verification.VerificationMethodType : Swift.RawRepresentable {}
+extension Verification.VerificationStateStatus : Swift.Equatable {}
+extension Verification.VerificationStateStatus : Swift.Hashable {}

@@ -1,0 +1,11 @@
+framework module Verification {
+  umbrella header "Verification.h"
+
+  export *
+  module * { export * }
+}
+
+module Verification.Swift {
+    header "Verification-Swift.h"
+    requires objc
+}
