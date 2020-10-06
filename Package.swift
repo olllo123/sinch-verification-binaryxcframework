@@ -16,11 +16,12 @@ let package = Package(
       .package(url: "https://github.com/marmelroy/PhoneNumberKit", .upToNextMajor(from: "3.3.1"))
     ],
     targets: [
+    .target(
+            name: "Verification",
+            dependencies: ["VerificationBin","Alamofire","PhoneNumberKit"]
+        ),
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .binaryTarget(name: "Verification", path: "artifacts/Verification.xcframework"),
-        .testTarget(
-            name: "VerificationTests",
-            dependencies: ["Verification"]),
+    .binaryTarget(name: "VerificationBin", path: "artifacts/Verification.xcframework"),
     ]
 )
